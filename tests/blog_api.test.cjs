@@ -69,3 +69,20 @@ test('a valid blog can be added', async () => {
   const titles = blogsAtEnd.body.map(b => b.title)
   expect(titles).toContain('New Blog Post')
 })
+
+test('if likes property is missing, it defaults to 0', async () => {
+  const newBlog = {
+    title: 'Test blog with no likes',
+    author: 'Tester',
+    url: 'http://testnolikes.com'
+    // no likes field
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  expect(response.body.likes).toBe(0)
+})
