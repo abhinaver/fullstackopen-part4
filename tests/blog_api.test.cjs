@@ -49,3 +49,23 @@ test('blog posts have id field defined, not _id', async () => {
 afterAll(async () => {
   await mongoose.connection.close()
 })
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: 'New Blog Post',
+    author: 'New Author',
+    url: 'http://newblog.com',
+    likes: 5,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await api.get('/api/blogs')
+  expect(blogsAtEnd.body).toHaveLength(initialBlogs.length + 1)
+
+  const titles = blogsAtEnd.body.map(b => b.title)
+  expect(titles).toContain('New Blog Post')
+})
