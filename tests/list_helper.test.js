@@ -47,3 +47,41 @@ describe('most blogs', () => {
     })
   })
 })
+describe('most likes', () => {
+  test('returns null for empty list', () => {
+    const result = listHelper.mostLikes([])
+    assert.strictEqual(result, null)
+  })
+
+  test('returns author with most total likes', () => {
+    const blogs = [
+      {
+        _id: '1',
+        title: 'Blog 1',
+        author: 'Edsger W. Dijkstra',
+        url: 'http://example.com/1',
+        likes: 5,
+      },
+      {
+        _id: '2',
+        title: 'Blog 2',
+        author: 'Robert C. Martin',
+        url: 'http://example.com/2',
+        likes: 3,
+      },
+      {
+        _id: '3',
+        title: 'Blog 3',
+        author: 'Edsger W. Dijkstra',
+        url: 'http://example.com/3',
+        likes: 12,
+      },
+    ]
+
+    const result = listHelper.mostLikes(blogs)
+    assert.deepStrictEqual(result, {
+      author: 'Edsger W. Dijkstra',
+      likes: 17,
+    })
+  })
+})
