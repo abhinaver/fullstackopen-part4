@@ -3,8 +3,8 @@ const blogsRouter = express.Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const userExtractor = require('../utils/userExtractor')
 
-// GET all blogs
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', {
     username: 1,
@@ -14,8 +14,7 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-// POST a new blog
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
 
   let decodedToken
@@ -29,11 +28,6 @@ blogsRouter.post('/', async (request, response) => {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
 
-  // ✅ Validate title and url
-  if (!body.title || !body.url) {
-    return response.status(400).json({ error: 'title and url are required' })
-  }
-
   const user = await User.findById(decodedToken.id)
 
   const blog = new Blog({
@@ -44,39 +38,55 @@ blogsRouter.post('/', async (request, response) => {
     user: user._id,
   })
 
-  const savedBlog = await blog.save()
+  try {
+    const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
 
-  user.blogs = user.blogs.concat(savedBlog._id)
-  await user.save()
-
-  const populatedBlog = await savedBlog.populate('user', {
-    username: 1,
-    name: 1,
-  })
-
-  response.status(201).json(populatedBlog)
+    const populatedBlog = await savedBlog.populate('user', { username: 1, name: 1 })
+    response.status(201).json(populatedBlog)
+  } catch (error) {
+    next(error)
+  }
 })
 
-// DELETE a blog by ID
-blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
-  response.status(204).end()
+blogsRouter.delete('/:id', userExtractor, async (request, response, next) => {
+  const user = request.user
+  const blog = await Blog.findById(request.params.id)
+
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' })
+  }
+
+  if (blog.user.toString() !== user._id.toString()) {
+    return response.status(403).json({ error: 'unauthorized: only creator can delete blog' })
+  }
+
+  try {
+    await Blog.findByIdAndDelete(request.params.id)
+    response.status(204).end()
+  } catch (error) {
+    next(error)
+  }
 })
 
-// PUT (update likes)
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', async (request, response, next) => {
   const { likes } = request.body
 
-  const updatedBlog = await Blog.findByIdAndUpdate(
-    request.params.id,
-    { likes },
-    { new: true, runValidators: true, context: 'query' }
-  )
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      request.params.id,
+      { likes },
+      { new: true, runValidators: true, context: 'query' }
+    )
 
-  if (updatedBlog) {
-    response.json(updatedBlog)
-  } else {
-    response.status(404).end()
+    if (updatedBlog) {
+      response.json(updatedBlog)
+    } else {
+      response.status(404).end()
+    }
+  } catch (error) {
+    next(error)
   }
 })
 
