@@ -1,48 +1,49 @@
-const { describe, test } = require('node:test')
+const { test, describe } = require('node:test')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
 
-const listWithMultipleBlogs = [
-  {
-    _id: '1',
-    title: 'First Blog',
-    author: 'Author A',
-    url: 'http://a.com',
-    likes: 3,
-    __v: 0,
-  },
-  {
-    _id: '2',
-    title: 'Second Blog',
-    author: 'Author B',
-    url: 'http://b.com',
-    likes: 7,
-    __v: 0,
-  },
-  {
-    _id: '3',
-    title: 'Third Blog',
-    author: 'Author C',
-    url: 'http://c.com',
-    likes: 5,
-    __v: 0,
-  },
-]
-
-describe('favorite blog', () => {
+describe('most blogs', () => {
   test('returns null for empty list', () => {
-    const result = listHelper.favoriteBlog([])
+    const result = listHelper.mostBlogs([])
     assert.strictEqual(result, null)
   })
 
-  test('returns the only blog when one blog is present', () => {
-    const blog = listWithMultipleBlogs[1]
-    const result = listHelper.favoriteBlog([blog])
-    assert.deepStrictEqual(result, blog)
-  })
+  test('returns the author with the most blogs', () => {
+    const blogs = [
+      {
+        _id: '1',
+        title: 'Blog 1',
+        author: 'Robert C. Martin',
+        url: 'http://example.com/1',
+        likes: 5,
+      },
+      {
+        _id: '2',
+        title: 'Blog 2',
+        author: 'Robert C. Martin',
+        url: 'http://example.com/2',
+        likes: 3,
+      },
+      {
+        _id: '3',
+        title: 'Blog 3',
+        author: 'Robert C. Martin',
+        url: 'http://example.com/3',
+        likes: 7,
+      },
+      {
+        _id: '4',
+        title: 'Blog 4',
+        author: 'Martin Fowler',
+        url: 'http://example.com/4',
+        likes: 4,
+      }
+    ]
 
-  test('returns the blog with most likes', () => {
-    const result = listHelper.favoriteBlog(listWithMultipleBlogs)
-    assert.deepStrictEqual(result, listWithMultipleBlogs[1]) // Second Blog with 7 likes
+    const result = listHelper.mostBlogs(blogs)
+    assert.deepStrictEqual(result, {
+      author: 'Robert C. Martin',
+      blogs: 3,
+    })
   })
 })
