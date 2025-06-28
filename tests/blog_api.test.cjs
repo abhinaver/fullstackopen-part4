@@ -118,3 +118,25 @@ test('blog without url is not added', async () => {
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 })
+
+test('a blog can be deleted', async () => {
+  const newBlog = {
+    title: 'Blog to delete',
+    author: 'Someone',
+    url: 'http://delete.com',
+    likes: 1,
+  }
+
+  const saved = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+
+  const blogsAtStart = await Blog.find({})
+  await api
+    .delete(`/api/blogs/${saved.body.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await Blog.find({})
+  expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+})
