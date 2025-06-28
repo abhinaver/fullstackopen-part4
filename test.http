@@ -1,9 +1,11 @@
-POST http://localhost:3003/api/blogs
+POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-  "title": "My first blog",
-  "author": "Joseph",
-  "url": "https://myblog.com",
-  "likes": 10
+  "username": "Abhinav",
+  "name": "Abhinav",
+  "password": "secret"
 }
+
+### Get all users
+GET http://localhost:3003/api/users
