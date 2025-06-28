@@ -30,7 +30,7 @@ usersRouter.post('/', async (req, res) => {
   res.status(201).json(savedUser)
 })
 
-// Add GET route to list users with their blogs
+// ✅ Get all users with their blogs populated
 usersRouter.get('/', async (req, res) => {
   const users = await User.find({}).populate('blogs', {
     title: 1,
@@ -41,6 +41,12 @@ usersRouter.get('/', async (req, res) => {
   })
 
   res.json(users)
+})
+
+// ✅ Temporary route to delete all users
+usersRouter.delete('/reset-users', async (req, res) => {
+  await User.deleteMany({})
+  res.status(204).end()
 })
 
 module.exports = usersRouter
