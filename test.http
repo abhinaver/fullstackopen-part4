@@ -1,1 +1,10 @@
-GET http://localhost:3003/api/blogs
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer <paste_token_here>
+
+{
+  "title": "JWT Protected Blog",
+  "author": "Test Author",
+  "url": "http://example.com",
+  "likes": 5
+}
