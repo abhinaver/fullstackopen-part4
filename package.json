@@ -1,37 +1,21 @@
 {
-  "name": "part-4",
+  "name": "fso-part4",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "cross-env NODE_ENV=test jest --verbose"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/abhinaver/part-4.git"
+    "test": "node --test",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/abhinaver/part-4/issues"
-  },
-  "homepage": "https://github.com/abhinaver/part-4#readme",
+  "description": "",
   "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.6.0",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "lodash": "^4.17.21",
-    "mongoose": "^8.16.1"
+    "mongoose": "^8.15.1"
   },
   "devDependencies": {
-    "bcryptjs": "^3.0.2",
-    "cross-env": "^7.0.3",
-    "jest": "^30.0.3",
-    "nodemon": "^3.1.10",
-    "supertest": "^7.1.1"
+    "nodemon": "^3.1.10"
   }
 }
